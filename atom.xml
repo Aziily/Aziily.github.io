@@ -6,7 +6,7 @@
   <link href="https://aziily.github.io/atom.xml" rel="self"/>
   
   <link href="https://aziily.github.io/"/>
-  <updated>2023-01-11T09:14:59.583Z</updated>
+  <updated>2023-01-11T09:17:23.827Z</updated>
   <id>https://aziily.github.io/</id>
   
   <author>
@@ -15,31 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>Hexo-LiveForCode</title>
-    <link href="https://aziily.github.io/Record/Hexo-LiveForCode/"/>
-    <id>https://aziily.github.io/Record/Hexo-LiveForCode/</id>
-    <published>2023-01-10T16:00:00.000Z</published>
-    <updated>2023-01-11T09:14:59.583Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="LiveForCode"><a href="#LiveForCode" class="headerlink" title="LiveForCode"></a>LiveForCode</h1><blockquote><p>这篇文章并非教程，配置教程建议参考主题原文<a href="https://notes.worstone.cn/article/1112885395">LiveForCode</a>。</p></blockquote><ul><li>其他服务<ul><li><a href="https://www.algolia.com/">Algolia</a><br><code>export HEXO_ALGOLIA_INDEXING_KEY=&lt;Admin API Key&gt;</code><br><code>hexo algolia --flush true --layouts post</code></li><li><a href="https://vercel.com/">Vercel</a><br>基本不需要更新吧应该(</li><li><a href="https://www.leancloud.cn/">Valine(LearnCloud)</a><br>管理评论</li></ul></li></ul>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1 id=&quot;LiveForCode&quot;&gt;&lt;a href=&quot;#LiveForCode&quot; class=&quot;headerlink&quot; title=&quot;LiveForCode&quot;&gt;&lt;/a&gt;LiveForCode&lt;/h1&gt;&lt;blockquote&gt;
-&lt;p&gt;这篇文章并非教程，配置教程建议参考主题原文</summary>
-      
-    
-    
-    
-    <category term="Record" scheme="https://aziily.github.io/category/Record/"/>
-    
-    
-    <category term="hexo" scheme="https://aziily.github.io/tag/hexo/"/>
-    
-  </entry>
   
   <entry>
     <title>Markdown和个人知识库</title>
@@ -64,6 +39,31 @@
     
     
     <category term="markdown" scheme="https://aziily.github.io/tag/markdown/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hexo-LiveForCode</title>
+    <link href="https://aziily.github.io/Record/Hexo-LiveForCode/"/>
+    <id>https://aziily.github.io/Record/Hexo-LiveForCode/</id>
+    <published>2023-01-10T16:00:00.000Z</published>
+    <updated>2023-01-11T09:14:59.583Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="LiveForCode"><a href="#LiveForCode" class="headerlink" title="LiveForCode"></a>LiveForCode</h1><blockquote><p>这篇文章并非教程，配置教程建议参考主题原文<a href="https://notes.worstone.cn/article/1112885395">LiveForCode</a>。</p></blockquote><ul><li>其他服务<ul><li><a href="https://www.algolia.com/">Algolia</a><br><code>export HEXO_ALGOLIA_INDEXING_KEY=&lt;Admin API Key&gt;</code><br><code>hexo algolia --flush true --layouts post</code></li><li><a href="https://vercel.com/">Vercel</a><br>基本不需要更新吧应该(</li><li><a href="https://www.leancloud.cn/">Valine(LearnCloud)</a><br>管理评论</li></ul></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;LiveForCode&quot;&gt;&lt;a href=&quot;#LiveForCode&quot; class=&quot;headerlink&quot; title=&quot;LiveForCode&quot;&gt;&lt;/a&gt;LiveForCode&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;这篇文章并非教程，配置教程建议参考主题原文</summary>
+      
+    
+    
+    
+    <category term="Record" scheme="https://aziily.github.io/category/Record/"/>
+    
+    
+    <category term="hexo" scheme="https://aziily.github.io/tag/hexo/"/>
     
   </entry>
   
