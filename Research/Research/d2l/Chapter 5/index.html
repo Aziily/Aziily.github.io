@@ -8,7 +8,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <title>
         
-            标签 - markdown
+            Chapter 5 深度学习计算
         
     </title>
     <link rel="shortcut icon" href="#"/>
@@ -36,15 +36,38 @@
 </head>
 <body>
     <a id="cover"></a>
-    <link type="text/css" rel="stylesheet" href="/css/archive.css">
+    <link type="text/css" rel="stylesheet" href="/css/post.css">
 <div id="header" class="header">
     <div class="vertical">
         <div class="inner">
             
-                <h1 class="header-subtitle">标签归档</h1>
+                <h1 class="header-subtitle">Chapter 5 深度学习计算</h1>
                 <div class="header-subinfo">
-                    <p class="article-info-text Chinese"></p>
-                    <p class="article-info-text English"></p>                  
+                    <p class="article-info-text">
+                        <span>
+                            <i class="iconfont icon-time"></i> 发表时间：2023-01-21
+                        </span>
+                        
+                            <span id="/Research/Research/d2l/Chapter 5/" class="leancloud_visitors" data-flag-title="Chapter 5 深度学习计算">
+                                <i class="iconfont icon-browse"></i> 阅读：<sapn class="leancloud-visitors-count"></span>
+                            </span>
+                        
+                        <span>
+                            <i class="iconfont icon-interactive"></i> 评论：<span class="valine-comment-count" data-xid="/Research/Research/d2l/Chapter 5/"></span>
+                        </span>  
+                    </p>
+                    
+                        
+                            <span class="category-color">Research</span>
+                        
+                    
+                    
+                        
+                            <span class="tag-color">learning</span>
+                        
+                            <span class="tag-color">d2l</span>
+                        
+                    
                 </div>
             
         </div>
@@ -53,37 +76,153 @@
 </div>
 <div id="container">
     
-        
-            <!-- 归档页面、分类归档页面、标签归档页面 -->
-            <div class="articles">
-                <div class="articles-wrap">
-                    <span class="archive-move-on"></span>
-                    <span class="archive-counter">
+        <!-- 文章页面 -->
+        <div id="article">
+            <div class="toc"></div>
+            <div class="article-body">
+                <h1 id="chapter-5-深度学习计算"><a class="markdownIt-Anchor" href="#chapter-5-深度学习计算"></a> Chapter 5 深度学习计算</h1>
+<h2 id="01层和块"><a class="markdownIt-Anchor" href="#01层和块"></a> 01	层和块</h2>
+<p><strong>块</strong>是一种比层大但又比整个模型小的结构，通常由一个或多个层组成，这一结构的目的主要是为了更加方便的表述模型，以及减少重复的代码。</p>
+<p>常见的块有残差块、上采样块、下采样块等等，它们都是将多个层封装到一起，通过一个块来实现所有层的功能。</p>
+<p>在框架中，我们借用以下代码来进行对层的封装</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">torch.nn.Sequential(*layers)</span><br></pre></td></tr></table></figure>
+<p>其行为逻辑类似于以下类</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MySequential</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, *args</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="keyword">for</span> idx, module <span class="keyword">in</span> <span class="built_in">enumerate</span>(args):</span><br><span class="line">            <span class="comment"># 这里，module是Module子类的一个实例。我们把它保存在&#x27;Module&#x27;类的成员</span></span><br><span class="line">            <span class="comment"># 变量_modules中。_module的类型是OrderedDict</span></span><br><span class="line">            self._modules[<span class="built_in">str</span>(idx)] = module</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        <span class="comment"># OrderedDict保证了按照成员添加的顺序遍历它们</span></span><br><span class="line">        <span class="keyword">for</span> block <span class="keyword">in</span> self._modules.values():</span><br><span class="line">            X = block(X)</span><br><span class="line">        <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>读者可能会好奇为什么每个<code>Module</code>都有一个<code>_modules</code>属性？ 以及为什么我们使用它而不是自己定义一个Python列表？ 简而言之，<code>_modules</code>的主要优点是： 在模块的参数初始化过程中， 系统知道在<code>_modules</code>字典中查找需要初始化参数的子块。</p>
+</blockquote>
+<p>通过这样一层封装（或将其封装到一个自定义类中），我们可以很方便的在一个模型中多次调用重复部分。</p>
+<p>但是，由于python<mark>全局解释锁</mark>的问题，可能存在高速GPU在快速训练过程中需要等待CPU运行python代码的字典查找等功能带来的<em>效率</em>下降。</p>
+<h2 id="02参数管理和读写文件"><a class="markdownIt-Anchor" href="#02参数管理和读写文件"></a> 02	参数管理和读写文件</h2>
+<p>感觉这一节没啥意义，现代框架应该基本都有参数初始化、参数查看、参数保存加载的功能吧，即使没有应该也有别的package去做这件事。然后因为和后面的读写文件一节比较类似，就一起写点东西了。</p>
+<p>下面是torch的参数保存加载，我觉得是这两节中比较常用的功能</p>
+<ul>
+<li>
+<p>保存加载整个模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">torch.save(model,<span class="string">&#x27;net.model&#x27;</span>)</span><br><span class="line">model = torch.load(<span class="string">&#x27;net.model&#x27;</span>)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>​		保存的是二进制文件，扩展名可随意更改</p>
+<ul>
+<li>
+<p>保存加载参数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">torch.save(model.state_dict(),<span class="string">&#x27;net_params.ckpt&#x27;</span>)</span><br><span class="line">state_dict=torch.load(<span class="string">&#x27;net_params.ckpt&#x27;</span>)</span><br><span class="line">model.load_state_dict(state_dict)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>前者的代码保存了整个模型，包括参数和模型结构，相对于另一种方法，它一般速度较慢，但是有更高的稳定性，不会因为某些原因导致无法加载；而后者则是只保存参数，保存加载一般都会更快，但是也可能会存在一些参数对应错误的问题。</p>
+<blockquote>
+<p>我曾经遇到过在使用DDP之后，如果直接保存经过DDP的model.module的参数，会出现保存的参数类型和未经过DDP的模型参数类型不一致的问题，导致无法在获得权重之后进行推理。后续是直接保存了整个模型，才解决了这一问题。</p>
+</blockquote>
+<h2 id="03延后初始化"><a class="markdownIt-Anchor" href="#03延后初始化"></a> 03	延后初始化</h2>
+<p>对于整个模型，很可能出现在推理过程中，张量大小出现错误，所以通过一种延迟初始化机制，只当传输到这一层时，模型才被初始化。这可以避免一些常见的错误，也使得整个网络更容易修改</p>
+<blockquote>
+<p>个人感觉这样反而会降低对整个网络的控制能力，不见得真的有啥优势:(</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line">net = nn.Sequential(nn.LazyLinear(<span class="number">256</span>), nn.ReLU(),nn.Linear(<span class="number">256</span>,<span class="number">10</span>))</span><br><span class="line"><span class="built_in">print</span>(net)</span><br><span class="line">[net[i].state_dict() <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(net))]</span><br><span class="line">low = torch.finfo(torch.float32).<span class="built_in">min</span>/<span class="number">10</span></span><br><span class="line">high = torch.finfo(torch.float32).<span class="built_in">max</span>/<span class="number">10</span></span><br><span class="line">X = torch.zeros([<span class="number">2</span>,<span class="number">20</span>],dtype=torch.float32).uniform_(low, high)</span><br><span class="line">net(X)</span><br><span class="line"><span class="built_in">print</span>(net)</span><br></pre></td></tr></table></figure>
+<p>简单来说就是调用nn.LazyLinear，好像torch对于这一类型的api还在开发，可能有些网络不支持</p>
+<h2 id="04自定义层"><a class="markdownIt-Anchor" href="#04自定义层"></a> 04	自定义层</h2>
+<p>分为带参数的和不带参数的，比较直观，直接给出样例</p>
+<ul>
+<li>
+<p>不带参数的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CenteredLayer</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        <span class="keyword">return</span> X - X.mean()</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>带参数的</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyLinear</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_units, units</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.weight = nn.Parameter(torch.randn(in_units, units))</span><br><span class="line">        self.bias = nn.Parameter(torch.randn(units,))</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, X</span>):</span><br><span class="line">        linear = torch.matmul(X, self.weight.data) + self.bias.data</span><br><span class="line">        <span class="keyword">return</span> F.relu(linear)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="05gpu"><a class="markdownIt-Anchor" href="#05gpu"></a> 05	GPU</h2>
+<p>通常都使用GPU来计算，因为GPU做了对相关计算的特殊化，以及因为本身的特性，在推理神经网络的时候有更好的效率</p>
+<p>我们可以通过以下代码来查看GPU状态和cuda配置（前提是先装好cuda并且你有GPU，安装可直接搜索查阅）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>张量转移到GPU</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1.声明时就转移</span></span><br><span class="line">X = torch.ones(<span class="number">2</span>, <span class="number">3</span>, device=<span class="string">&quot;cuda&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2.使用时再转移</span></span><br><span class="line">X = torch.ones(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">X = X.to(<span class="string">&quot;cuda&quot;</span>)</span><br><span class="line">X = X.cuda()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3.指定使用的GPU编号（通过nvidia-smi查看）</span></span><br><span class="line">X = torch.ones(<span class="number">2</span>, <span class="number">3</span>, device=<span class="string">&quot;cuda:0&quot;</span>)</span><br><span class="line"></span><br><span class="line">X = torch.ones(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">X = X.to(<span class="string">&quot;cuda:0&quot;</span>)</span><br><span class="line">X = X.cuda(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">### 一般都不会直接指定cuda，而是通过以下代码指定一个设备</span></span><br><span class="line">device = <span class="string">&quot;cuda&quot;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&quot;cpu&quot;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>模型转移到GPU</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model.to(device)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>顺便提几个常见问题</p>
+<ul>
+<li>
+<p>cuda out of memory</p>
+<p>在训练一些大模型时，需要向GPU显存传输的张量时十分大的，这会导致GPU显存放不下，这种问题一般是通过降低batch_size来解决的，当然会造成训练速度的下降</p>
+<p>也有一些更好的优化模型来处理这一问题，比如accelerate，colossalai，deepspeed等等，它们用了一种zero2/zero3的技术来更好的、更充分的利用各种资源，具体可查看相关文档。（不止有解决显存的能力，这些框架往往还包含加速以及并行化的功能）</p>
+</li>
+<li>
+<p>设备不一致</p>
+<p>在使用GPU时，要注意保持张量和模型处于同一设备上，不然会报错</p>
+</li>
+</ul>
+</blockquote>
+
+                
+                <p class="end">__END__</p>
+            </div>
+            <div class="article-footer">
+                <!-- <div class="suffix-box">
+    <div class="suffix-box-left">
+        <img src="/image/sidebar/avatar.jpg" alt="Azily">
+    </div>
+    <div class="suffix-box-right">
+        <span class="suffix-box-title">文章作者：</span>Azily
+        <br>
+        <span class="suffix-box-title">文章出处：</span><a href="/Research/Research/d2l/Chapter%205/" target="_blank">Chapter 5 深度学习计算</a>
+        <br>
+        <span class="suffix-box-title">作者签名：</span>
+        <br>
+        <span class="suffix-box-title">关于主题：</span><a href="https://github.com/first19326/Hexo-LiveForCode" target="_blank">Hexo - Live For Code</a>
+        <br>
+        <span class="suffix-box-title">版权声明：</span>文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" title="BY-NC-SA" target="_blank">BY-NC-SA</a> 许可协议，转载请注明出处
+        <br>
+    </div>
+    <div style="clear: both;"></div>
+</div> -->
+<div></div>
+                
+                    <div class="category">
+                        分类：
                         
-                            当前标签：<span class="tag">markdown</span>
+                            <a href="/category/Research/">Research</a>
                         
-                    </span>
+                    </div>
+                
+                
+                    <div class="tag">
+                        标签：
+                        
+                            <a href="/tag/learning/">learning</a>
+                        
+                            <a href="/tag/d2l/">d2l</a>
+                        
+                    </div>
+                
+                <div class="article-prev-next">
+                    
+                        <a href="/Research/Research/d2l/Chapter%204/" class="prev-prefix">« </a> 上一篇：    <a href="/Research/Research/d2l/Chapter%204/" title="发布于 2023-01-21 12:00">Chapter 4 多层感知机</a>
+                        <br>
                     
                     
-                        
-                            <div class="archive-title">
-                                <h2 class="archive-year">2023</h2>
-                            </div>
-                            
-                           
-                        <div class="article">
-                            <div class="article-header">
-                                <h1 class="article-title"><a href="/Introduction/Introduction/Markdown%E5%92%8C%E4%B8%AA%E4%BA%BA%E7%9F%A5%E8%AF%86%E5%BA%93/"><span>Markdown和个人知识库</span></a></h1>
-                                <div class="article-meta">
-                                    <span class="article-time">01-11</span>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="/Research/Research/d2l/Chapter%206/" class="next-prefix">» </a> 下一篇：    <a href="/Research/Research/d2l/Chapter%206/" title="发布于 2023-01-21 12:00">Chapter 6 卷积神经网络</a>
                     
                 </div>
             </div>
             
+    <div class="article-comments">
         
+            <div class="comments-title">
+                评论列表
+            </div>
+        
+        <div class="comments-content"></div>
+    </div>
+
+        </div>
     
 </div>
     <div id="footer"></div>
